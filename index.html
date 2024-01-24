@@ -5,21 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="referrer" content="no-referrer">
     <title>Astro Cricket HD</title>
-<div style="background-color: #0074d9; text-align: center; padding: 10px;">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.5.0/controls.min.css" crossorigin="anonymous">
-
+    <div style="background-color: #0074d9; text-align: center; padding: 10px;">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.7.1/shaka-player.ui.min.js" crossorigin="anonymous"></script>    
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/4.5.0/controls.min.css" crossorigin="anonymous">
+    </div>
 </head>
 <body bgcolor='black' style='margin:0'>
-
-<body>
     <center>
-            <div data-shaka-player-container style='width: 100%; height: 100%'>
+        <div data-shaka-player-container style='width: 100%; height: 100%'>
             <video poster="https://linear-poster.astro.com.my/prod/poster/ivp_default_10000229_IVP_LAND_586x330.jpg" autoplay data-shaka-player id='video' style='width:100%;height:100%;'></video>
         </div>
     </center>
     <script>
-        const manifestUri = "getMPDFile()";
         async function init() {
             const video = document.getElementById('video');
             const ui = video['ui'];
@@ -27,36 +24,45 @@
             const player = controls.getPlayer();
             window.player = player;
             window.ui = ui;
-            player.configure({
-                drm: {
-                    "clearKeys": {
-                        'getClearKey()'
-                    }
-                }
-            });
-            player.addEventListener('error', onPlayerErrorEvent);
-            controls.addEventListener('error', onUIErrorEvent);
+
             try {
+                const manifestUri = await getMPDFile();
+                const clearKey = await getClearKey();
+
+                player.configure({
+                    drm: {
+                        "clearKeys": {
+                            [clearKey.keyId]: clearKey.keyValue
+                        }
+                    }
+                });
+
                 await player.load(manifestUri);
                 console.log('The video has now been loaded!');
             } catch (error) {
                 onPlayerError(error);
-        }}
-        function onPlayerErrorEvent(errorEvent) {
-            onPlayerError(event.detail);
+            }
         }
+
+        function onPlayerErrorEvent(errorEvent) {
+            onPlayerError(errorEvent.detail);
+        }
+
         function onPlayerError(error) {
             console.error('Error code', error.code, 'object', error);
         }
+
         function onUIErrorEvent(errorEvent) {
-            onPlayerError(event.detail);
+            onPlayerError(errorEvent.detail);
         }
+
         function initFailed(errorEvent) {
             console.error('Unable to load the UI library!');
         }
+
         document.addEventListener('shaka-ui-loaded', init);
         document.addEventListener('shaka-ui-load-failed', initFailed);
     </script>
-<script>"script.js"</script>
+    <script src="script.js"></script>
 </body>
 </html>
