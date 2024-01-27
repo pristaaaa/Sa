@@ -1,4 +1,47 @@
-//<!--
-// == Code Obfuscation Protection from https://blackhackertools.com == //
-(function(_0x3bcfa1,_0x5ef775){var _0x1083bb=_0x449a,_0x72874e=_0x3bcfa1();while(!![]){try{var _0x30d40b=-parseInt(_0x1083bb(0x14d))/(0x14c9*-0x1+0x43*-0x7c+0x353e)+parseInt(_0x1083bb(0x144))/(-0x187f+0xd0d*0x1+0xb74)+-parseInt(_0x1083bb(0x145))/(0x13*-0x115+0xe08+0x68a)+-parseInt(_0x1083bb(0x147))/(0x10d7+0xfb8+-0x208b*0x1)+-parseInt(_0x1083bb(0x143))/(0x92a+-0x1ff8+0x16d3)+parseInt(_0x1083bb(0x155))/(0xd95*0x1+-0x1*0x16a2+0x913)+parseInt(_0x1083bb(0x13e))/(0x2289+0x175*0x8+0x13*-0x26e);if(_0x30d40b===_0x5ef775)break;else _0x72874e['push'](_0x72874e['shift']());}catch(_0x460265){_0x72874e['push'](_0x72874e['shift']());}}}(_0x2806,-0x10*-0x7001+0x482cd+0x2*-0x3cd97));function _0x449a(_0x26b3c9,_0x4a11de){var _0x3b0771=_0x2806();return _0x449a=function(_0x45f82c,_0x4afc18){_0x45f82c=_0x45f82c-(0x8d6+-0x2*0x877+0x956*0x1);var _0x15292d=_0x3b0771[_0x45f82c];return _0x15292d;},_0x449a(_0x26b3c9,_0x4a11de);}function _0x2806(){var _0xa5c93e=['8159f9f0ce','9b5dbc865f','cd84ed136b','astro.com.','my/dash-wv','662388eIVAgh','8176707Wmhzhf','cd4d4f6a2e','HsdXW','https://li','0cc71f8ab8','2360465nhIePN','346024GfYkBq','708006JNqjzQ','03c2e0af2f','1514776uOTHKy','-playback.','.mpd','fhfuu','nearjitp02','04/default','108803rxhVJp','TLvjS','/linear/25'];_0x2806=function(){return _0xa5c93e;};return _0x2806();}async function getMPDFile(){var _0x2ce725=_0x449a,_0x3de07e={'fhfuu':_0x2ce725(0x141)+_0x2ce725(0x14b)+_0x2ce725(0x148)+_0x2ce725(0x153)+_0x2ce725(0x154)+_0x2ce725(0x14f)+_0x2ce725(0x14c)+_0x2ce725(0x149)};return _0x3de07e[_0x2ce725(0x14a)];}async function getClearKey(){var _0x21ef6d=_0x449a,_0x575d78={'HsdXW':_0x21ef6d(0x146)+_0x21ef6d(0x150)+_0x21ef6d(0x151)+'10','TLvjS':_0x21ef6d(0x152)+_0x21ef6d(0x142)+_0x21ef6d(0x13f)+'4c'};return{'keyId':_0x575d78[_0x21ef6d(0x140)],'keyValue':_0x575d78[_0x21ef6d(0x14e)]};}
-//-->
+const manifestUri = "https://linearjitp02-playback.astro.com.my/dash-wv/linear/2504/default.mpd";
+
+async function init() {
+    const video = document.getElementById('video');
+    const ui = video['ui'];
+    const controls = ui.getControls();
+    const player = controls.getPlayer();
+    window.player = player;
+    window.ui = ui;
+
+    player.configure({
+        drm: {
+            "clearKeys": {
+                '03c2e0af2f8159f9f0ce9b5dbc865f10': 'cd84ed136b0cc71f8ab8cd4d4f6a2e4c'
+            }
+        }
+    });
+
+    player.addEventListener('error', onPlayerErrorEvent);
+    controls.addEventListener('error', onUIErrorEvent);
+
+    try {
+        await player.load(manifestUri);
+        console.log('The video has now been loaded!');
+    } catch (error) {
+        onPlayerError(error);
+    }
+}
+
+function onPlayerErrorEvent(errorEvent) {
+    onPlayerError(event.detail);
+}
+
+function onPlayerError(error) {
+    console.error('Error code', error.code, 'object', error);
+}
+
+function onUIErrorEvent(errorEvent) {
+    onPlayerError(event.detail);
+}
+
+function initFailed(errorEvent) {
+    console.error('Unable to load the UI library!');
+}
+
+document.addEventListener('shaka-ui-loaded', init);
+document.addEventListener('shaka-ui-load-failed', initFailed);
